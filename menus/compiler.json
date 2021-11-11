@@ -2,8 +2,8 @@
   "context-menu": {
     "atom-text-editor": [
       {
-        "label": "Toggle compiler",
-        "command": "compiler:toggle"
+        "label": "Run compiler",
+        "command": "compiler:compile"
       }
     ]
   },
@@ -15,8 +15,8 @@
           "label": "compiler",
           "submenu": [
             {
-              "label": "Toggle",
-              "command": "compiler:toggle"
+              "label": "Compile",
+              "command": "compiler:compile"
             }
           ]
         }

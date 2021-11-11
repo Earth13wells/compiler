@@ -10,7 +10,7 @@ module.exports = {
         this.subscriptions = new CompositeDisposable();
         this.subscriptions.add(atom.commands.
             add("atom-text-editor", {
-                "gpp-compiler:compile": () => {
+                "compiler:compile": () => {
                     compileFile(getFileType());
                 },
               }
@@ -84,7 +84,7 @@ function getArgs(files, output, fileType) {
         ...atom.
             config.
             // string of all user-defined options
-            get(`gpp-compiler.${chosenOptions}CompilerOptions`).
+            get(`compiler.${chosenOptions}CompilerOptions`).
             // turn that string into an array separated by spaces
             split(" ").
             // remove falsy elements
@@ -150,7 +150,7 @@ function compile(command, info, args) {
 
             // if the user wants the program to run after compilation, run it in their
             // favorite terminal
-            if (atom.config.get("gpp-compiler.runAfterCompile")) {
+            if (atom.config.get("compiler.runAfterCompile")) {
                 // options to tell child_process.spawn() to run in the directory of the
                 // program
                 const options = {
@@ -165,8 +165,8 @@ function compile(command, info, args) {
                     let terminalCommand = null;
                     let args = null;
 
-                    child_process.spawn(atom.config.get("gpp-compiler.terminal"), [
-                        ...[atom.config.get("gpp-compiler.terminalArgs")],
+                    child_process.spawn(atom.config.get("compiler.terminal"), [
+                        ...[atom.config.get("compiler.terminalArgs")],
                         file
                     ], options);
                 }

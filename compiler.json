@@ -2,13 +2,13 @@
   "name": "compiler",
   "main": "./lib/compiler",
   "version": "0.0.0",
-  "description": "A short description of your package",
+  "description": "Hot key compiler for c/rust/c++",
   "keywords": [
   ],
   "activationCommands": {
     "atom-workspace": "compiler:toggle"
   },
-  "repository": "https://github.com/atom/compiler",
+  "repository": "https://github.com/Earth13Wells/compiler",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
