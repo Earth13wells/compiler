@@ -1,0 +1,26 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Toggle compiler",
+        "command": "compiler:toggle"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "compiler",
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "compiler:toggle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
