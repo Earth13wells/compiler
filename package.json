@@ -9,7 +9,7 @@
     "atom-workspace": "compiler:compile"
   },
   "repository": "https://github.com/Earth13Wells/compiler",
-  "license": "MIT",
+  "license": "GPL3",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
