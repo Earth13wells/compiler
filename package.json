@@ -1,12 +1,12 @@
 {
   "name": "compiler",
-  "main": "./lib/compiler",
+  "main": "index.js",
   "version": "0.0.0",
   "description": "Hot key compiler for c/rust/c++",
   "keywords": [
   ],
   "activationCommands": {
-    "atom-workspace": "compiler:toggle"
+    "atom-workspace": "compiler:compile"
   },
   "repository": "https://github.com/Earth13Wells/compiler",
   "license": "MIT",
