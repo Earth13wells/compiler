@@ -143,21 +143,16 @@ function compile(command, info, args) {
             atom.notifications.
                 addError(stderr.replace(/\n/g, "<br/>"));
         } else {
-            // compilation was successful, but there still may be warnings
-            if (stderr) {
-				atom.notifications.addWarning(stderr.replace(/\n/g, "<br/>"));
-			}
-
-            // run program in terminal after compilation
-            if (atom.config.get("compiler.runAfterCompile")) {
+            if (stderr) {// compilation was successful, but there still may be warnings
+                atom.notifications.addWarning(stderr.replace(/\n/g, "<br/>"));
+            }
+            if (atom.config.get("compiler.runAfterCompile")) {// run program in terminal after compilation
                 if (true) {
                     child_process.spawn(atom.config.get("compiler.terminal"), [
                         ...[atom.config.get("compiler.terminalArgs")],
                         path.join(info.dir, info.name)]);
                 }
             }
-
         }
-      }
-    );
+    });
 }
