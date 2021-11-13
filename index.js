@@ -11,17 +11,29 @@ module.exports = {
         this.subscriptions.add(atom.commands.
             add("atom-text-editor", {
                 "compiler:compile": () => {
-                    compileFile(getFileType());
+                    verifyCompile(getFileType());
                 },
               }
             )
         );
     },
     config: {
+        cCompiler:{
+            default: "gcc",
+            description: "C Compiler",
+            title: "C Compiler",
+            type: "string"
+        },
         cCompilerOptions: {
             default: "",
             description: "C Flags",
             title: "C Compiler Flags",
+            type: "string"
+        },
+        cppCompiler:{
+            default: "g++",
+            description: "C++ Compiler",
+            title: "C++ Compiler",
             type: "string"
         },
         cppCompilerOptions: {
@@ -30,17 +42,17 @@ module.exports = {
             title: "C++ Compiler Flags",
             type: "string"
         },
+        rustCompiler:{
+            default: "rustc",
+            description: "Rust Compiler",
+            title: "Rust Compiler",
+            type: "string"
+        },
         rustCompilerOptions: {
             default: "",
             description: "Rust Flags",
             title: "Rust Compiler Flags",
             type: "string"
-        },
-        runAfterCompile: {
-            default: true,
-            description: "",
-            title: "Run After Compile",
-            type: "boolean"
         },
         terminal: {
             default: "st",
@@ -53,81 +65,69 @@ module.exports = {
             description: "Terminal arguments",
             title: "Terminal Emulator arguments",
             type: "string"
+        },
+        runAfterCompile: {
+            default: true,
+            description: "",
+            title: "Run After Compile",
+            type: "boolean"
         }
     },
 };
 
+
 function getFileType() {
-    return atom.workspace.
-        getActiveTextEditor().
-        getGrammar().
-        name;
+    return atom.workspace
+        .getActiveTextEditor()
+        .getGrammar()
+        .name;
+}
+
+
+function getCompiler(fileType){
+    return atom
+        .config
+        .get(`compiler.${fileType.toLowerCase().replace("++", "pp")}Compiler`);
 }
 
 
 function getArgs(files, output, fileType) {
-    // atom throws a SyntaxError if you use ES6's default parameters
-    if (fileType == 'C') {
-        var chosenOptions = "c";
-    }
-    else if(fileType == 'C++'){
-        var chosenOptions = "cpp";
-    }
-    else if(fileType == 'Rust'){
-        var chosenOptions = "rust";
-    }
     // array of arguments to pass to the compiler
     const args = [
-        ...files,
-        "-o",
-        output,
-        ...atom.
-            config.
+        ...files,"-o",output,
+        ...atom.config.
             // string of all user-defined options
-            get(`compiler.${chosenOptions}CompilerOptions`).
+            get(`compiler.${fileType.toLowerCase().replace("++", "pp")}CompilerOptions`)
             // turn that string into an array separated by spaces
-            split(" ").
-            // remove falsy elements
-            filter(Boolean)
+            .split(" ")
+            // remove fals elements
+            .filter(Boolean)
     ];
     return args;
 }
 
-
-function compileFile(fileType) {
+function verifyCompile(fileType){
     const file = atom.workspace.getActiveTextEditor().buffer.file;
 
-    if (file) {
-        const info = path.parse(file.path);
-        if (fileType == 'C') {
-            var chosenCompiler = "gcc";
-        }
-        else if(fileType == 'C++'){
-            var chosenCompiler = "g++";
-        }
-        else if(fileType == 'Rust'){
-            var chosenCompiler = "rustc";
-        }
-        else{
-            atom.notifications.
-                addError("<strong>File type not supported.</strong><br/>Not a supported file type.");
-        }
-        compile(chosenCompiler, info, getArgs([file.path], path.join(info.dir, info.name), fileType));
-    } else {
+    // if the file doesn't exist in the file system, throw warning
+    if (!file) {
         atom.notifications.
             addError("<strong>File not found.</strong><br/>Save before compiling.");
+    } else if(!getCompiler(fileType)){ //if no compiler exists for the given program type, throw warning
+        atom.notifications.
+            addError("<strong>File type not supported.</strong><br/>Not a supported file type.");
+    } else {
+        const info = path.parse(file.path);
+        compile(getCompiler(fileType), info, getArgs([file.path], path.join(info.dir, info.name), fileType));
     }
 }
 
 
-// spawn the compiler to compile files and optionally run the compiled files
 function compile(command, info, args) {
-    // if the user has a text editor open, save it
-    if (atom.workspace.getActiveTextEditor()) {
-        atom.workspace.getActiveTextEditor().save();
-    }
+    // save the currently open file
+    atom.workspace.getActiveTextEditor().save();
     // spawn the compiler with the working directory of info.dir
-    const child = child_process.spawn(command, args, {
+     const child = child_process.spawn(command, args, {
         cwd: info.dir
     });
 
@@ -148,29 +148,16 @@ function compile(command, info, args) {
 				atom.notifications.addWarning(stderr.replace(/\n/g, "<br/>"));
 			}
 
-            // if the user wants the program to run after compilation, run it in their
-            // favorite terminal
+            // run program in terminal after compilation
             if (atom.config.get("compiler.runAfterCompile")) {
-                // options to tell child_process.spawn() to run in the directory of the
-                // program
-                const options = {
-                    cwd: info.dir
-                };
-
                 if (true) {
-                    //spawn the program in the user set
-                    // terminal
-                    const file = path.join(info.dir, info.name);
-
-                    let terminalCommand = null;
-                    let args = null;
-
                     child_process.spawn(atom.config.get("compiler.terminal"), [
                         ...[atom.config.get("compiler.terminalArgs")],
-                        file
-                    ], options);
+                        path.join(info.dir, info.name)]);
                 }
             }
+
         }
-    });
+      }
+    );
 }
