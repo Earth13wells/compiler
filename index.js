@@ -147,11 +147,9 @@ function compile(command, info, args) {
                 atom.notifications.addWarning(stderr.replace(/\n/g, "<br/>"));
             }
             if (atom.config.get("compiler.runAfterCompile")) {// run program in terminal after compilation
-                if (true) {
-                    child_process.spawn(atom.config.get("compiler.terminal"), [
-                        ...[atom.config.get("compiler.terminalArgs")],
-                        path.join(info.dir, info.name)]);
-                }
+                child_process.spawn(atom.config.get("compiler.terminal"), [
+                    ...[atom.config.get("compiler.terminalArgs")],
+                    path.join(info.dir, info.name)]);
             }
         }
     });
